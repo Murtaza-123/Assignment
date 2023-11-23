@@ -9,10 +9,13 @@ import {
 import { TaskService } from './task.service';
 import { TaskDto } from 'src/dto/task.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('task')
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
+
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Post('createPost')
   async createPost(@Body() taskDto: TaskDto) {
@@ -20,6 +23,7 @@ export class TaskController {
     return task;
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Get('/getPost')
   async getPost(@Request() req) {
