@@ -2,6 +2,8 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
+import { SignInDTO } from 'src/dto/signin.dto';
+import { SignUpDTO } from 'src/dto/signout.dto';
 import { User } from 'src/models/user.entity';
 import { Repository } from 'typeorm';
 
@@ -13,16 +15,18 @@ export class AuthService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async signUp(email: string, password: string): Promise<User> {
+  async signUp(signUpDTO: SignUpDTO): Promise<User> {
+    const { password } = signUpDTO;
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = new User();
-    user.email = email;
     user.password = hashedPassword;
+    user.email = signUpDTO.email;
     return await this.userRepository.save(user);
   }
 
-  async signIn(email: string, password: string): Promise<any> {
+  async signIn(signin: SignInDTO): Promise<any> {
+    const { email, password } = signin;
     const user = await this.userRepository.findOne({
       where: { email: email },
     });
